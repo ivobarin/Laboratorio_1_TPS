@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+
 int confirmarProcedimiento(char *pMensaje)
 {
     int retorno = 0;
@@ -77,6 +78,47 @@ int esNumerica(char* cadena)
     return retorno;
 }
 
+int esEspacio(char* cadena)
+{
+    int retorno = 1;
+    if(cadena != NULL && strlen(cadena) > 0)
+    {
+        if(cadena[0] == ' ')
+        {
+            retorno = 0;
+        }
+    }
+    return retorno;
+}
+
+int esSimbolo(char* cadena)
+{
+    int i = 0;
+    int retorno = 1;
+    if(cadena != NULL && strlen(cadena) > 0)
+    {
+        while(cadena[i] != '\0')
+        {
+            if(cadena[i] == '&' ||
+                    cadena[i] == '(' ||
+                    cadena[i] == ')' ||
+                    cadena[i] == '-' ||
+                    cadena[i] == '_' ||
+                    cadena[i] == '+' ||
+                    cadena[i] == '%' ||
+                    cadena[i] == '$' ||
+                    cadena[i] == '@')
+            {
+                retorno = 0;
+                break;
+            }
+            i++;
+        }
+    }
+    return retorno;
+}
+
+
 int getInt(int* pResultado)
 {
     int retorno=-1;
@@ -140,7 +182,7 @@ int tomarCadena(char cadena[],int longitud,char mensaje[], char mensajeError[], 
         printf("%s",mensaje);
         fflush(stdin);
         scanf("%[^\n]",buffer);
-        if(!(esNumerica(buffer)) && (int)strlen(buffer) > 0)
+        if(!(esNumerica(buffer)) && (int)strlen(buffer) > 0 && esEspacio(buffer) && esSimbolo(buffer))
         {
             largoBuffer = (int)strlen(buffer);//casteamos el strlen para que tome la cantidad del largo del buffer.
 

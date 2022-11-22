@@ -41,7 +41,7 @@ eJugador cargaDatosJugador()
     int contrato;
 
     //CARGA DE NOMBRE
-    tomarCadena(auxiliar.nombre,50,"\nPorfavor, ingrese el nombre del Jugador: ","\nError, ingrese al menos una letra y ningun numero!\n",1000);
+    tomarCadena(auxiliar.nombre,50,"\nPorfavor, ingrese el nombre del Jugador: ","\nError, ingrese al menos una letra y ningun numero o space!\n",1000);
     fflush(stdin);//vaciamos la entrada standard
     //CARGA DE CONFEDERACION
     menuPosicion();
@@ -79,23 +79,6 @@ int inicializarJugadores(eJugador vec[], int tam)
     return retorno;
 }
 
-int eJugadorBuscarEspacioLibre(eJugador vec[], int tam)
-{
-    int retorno = -1;
-    if(vec != NULL && tam > 0)
-    {
-        for(int x=0; x<tam; x++)
-        {
-            if(!vec[x].isEmpty)
-            {
-                retorno = x;
-                break;
-            }
-        }
-    }
-    return retorno;
-}
-
 short buscarJugadorLibre(eJugador jugadores[], int cantJugador)
 {
     int retorno = -1;
@@ -116,20 +99,18 @@ int listarJugadores(eJugador jugadores[], int tam, eConfederacion confederacione
 {
     int retorno = 0;
     int bandera = 0;
-    char descripcion[50];
 
     if(jugadores != NULL && tam > 0 && confederaciones != NULL && cantConfederacion > 0)
     {
         printf("\n ___________________________________________________________________________________________________________________________________\n"
                "|%-5s|%-20s|%-20s|%-20s|%-20s|%-20s|A%cos de Contrato    |\n"
-               "|=====|====================|====================|====================|====================|====================|====================|\n","ID","Nombre","Posicion","Nro Camiseta","Confederacion","Sueldo",164);
+               "|=====|====================|====================|====================|====================|====================|====================|\n","ID","Nombre","Posicion","Nro Camiseta","Sueldo","Confederacion",164);
         for(int x=0; x<tam; x++)
         {
             if(jugadores[x].isEmpty == OCUPADO)
             {
                 bandera=1;
-                cargarDescripcionConfederacion(confederaciones,cantConfederacion,jugadores[x].idConfederacion,descripcion);
-                printf("|%-5d|%-20s|%-20s|%-20hd|%-20s|%-20.2f|%-20hd|\n",jugadores[x].id,jugadores[x].nombre, jugadores[x].posicion, jugadores[x].numeroCamiseta, descripcion, jugadores[x].salario, jugadores[x].aniosContrato);
+                mostrarUnJugador(jugadores[x],confederaciones,cantConfederacion);
             }
         }
         printf("|_____|____________________|____________________|____________________|____________________|____________________|____________________|\n");
@@ -173,11 +154,7 @@ int mostrarUnJugador(eJugador jugador, eConfederacion confederaciones[],int cant
         if(jugador.isEmpty == OCUPADO)
         {
             cargarDescripcionConfederacion(confederaciones,cantConfederacion,jugador.idConfederacion,descripcion);
-            printf("\n ___________________________________________________________________________________________________________________________________\n"
-                   "|%-5s|%-20s|%-20s|%-20s|%-20s|%-20s|A%cos de Contrato    |\n"
-                   "|=====|====================|====================|====================|====================|====================|====================|\n","ID","Nombre","Posicion","Nro Camiseta","Sueldo","Confederacion",164);
             printf("|%-5d|%-20s|%-20s|%-20hd|%-20.2f|%-20s|%-20hd|\n",jugador.id,jugador.nombre, jugador.posicion, jugador.numeroCamiseta,jugador.salario, descripcion, jugador.aniosContrato);
-            printf("|_____|____________________|____________________|____________________|____________________|____________________|____________________|\n\n");
             retorno = 1;
         }
     }
@@ -257,7 +234,7 @@ int modificarJugador(eJugador jugadores[], int tam, eConfederacion confederacion
                     do
                     {
                         menuModificacion();
-                        ingresarOpcion(&opcion,"ingrese una ID valida: ");
+                        tomarEntero(&opcion,"ingrese una opcion: ","\nPorfavor, ingrese una opcion valida!\n\n",1,7,100000);
                         switch(opcion)
                         {
                         case 1:
@@ -288,9 +265,6 @@ int modificarJugador(eJugador jugadores[], int tam, eConfederacion confederacion
                         case 7:
                             salir = 's';
                             retorno = 1;
-                            break;
-                        default:
-                            printf("\nError, ingrese una opcion valida!\n");
                             break;
                         }
                     }

@@ -1,13 +1,3 @@
-/*
- ============================================================================
- Name        : TP_2.c
- Author      : Ivo Barinstein
- Version     :
- Copyright   : Trabajo Práctico nro2 de Ivo Barinstein
- Description : PERDON POR LA DESPROLIJIDAD
- ============================================================================
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -24,7 +14,7 @@
 
 int main()
 {
-    setbuf(stdout,NULL);
+	setvbuf(stdout, NULL, _IONBF, 0);//AGREGADO PARA EVITAR BUG CONSOLA ECLIPSE
     eConfederacion confederaciones[CANT_CONFEDERACION];
     eJugador jugadores[CANT_JUGADOR];
     int pOpcion;
@@ -36,11 +26,11 @@ int main()
     inicializarJugadores(jugadores,CANT_JUGADOR);
     harcodearConfederacion(confederaciones, CANT_CONFEDERACION);
 
-/**< -----------------------------------------------menu de opciones---------------------------------------------------------------------------------------------------------- */
+    /**< -----------------------------------------------menu de opciones---------------------------------------------------------------------------------------------------------- */
     do
     {
         menuPrincipal();
-        ingresarOpcion(&pOpcion,"ingrese una opcion: ");
+        tomarEntero(&pOpcion,"ingrese una opcion: ","\nPorfavor, ingrese una opcion valida!\n\n",1,5,100000);
         switch(pOpcion)
         {
         case 1:

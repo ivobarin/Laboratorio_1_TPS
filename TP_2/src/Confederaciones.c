@@ -12,8 +12,8 @@ int harcodearConfederacion(eConfederacion vec[], int tam)
         eConfederacion harcodeo[]=
         {
             {100,"CONMEBOL","Sudamerica",1916},
-            {101,"AFC", "Asia",1954},
-            {102,"UEFA","Europa",1954},
+            {101,"UEFA", "Europa",1954},
+            {102,"AFC","Asia",1954},
             {103,"CAF","Africa",1957},
             {104,"CONCACAF","Norte y Centro America",1961},
             {105,"OFC","Oceania",1966},

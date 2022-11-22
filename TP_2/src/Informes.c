@@ -50,24 +50,31 @@ int informarJugadorConfederacion(eJugador vec[], int tam,eConfederacion confeder
 
     if(vec != NULL && confederaciones != NULL && tam > 0 && tamConfederacion > 0)
     {
-        printf("   *** Listado de Jugadores por Confederacion***   \n");
-        printf("====================================================\n");
+        printf(" __________________________________________________\n");
+        printf("|  *** Listado de Jugadores por Confederacion***   |\n");
+        printf("|==================================================|\n");
+        printf("|INGRESE EL ID DE UNA CONFEDERACION PARA INFORMAR  |\n");
+        printf("|__________________________________________________|\n");
 
-        mostrarConfederacion(confederaciones,tamConfederacion);
+        mostrarConfederacion(confederaciones, tamConfederacion);
 
-        tomarEntero(&idConfederacion, "Ingrese el ID de una confederacion: ", "\nVuelva a ingresar el ID!\n",100,105,1000);
+        tomarEntero(&idConfederacion, "ingrese el id de una confederacion: ", "\nVUELVA A INGRESAR UN ID!\n",100,105,1000);
         for(int i=0; i < tam; i++)
         {
             if( vec[i].isEmpty == OCUPADO && vec[i].idConfederacion == idConfederacion)
             {
+                printf("\n ___________________________________________________________________________________________________________________________________\n"
+                       "|%-5s|%-20s|%-20s|%-20s|%-20s|%-20s|A%cos de Contrato    |\n"
+                       "|=====|====================|====================|====================|====================|====================|====================|\n","ID","Nombre","Posicion","Nro Camiseta","Sueldo","Confederacion",164);
                 mostrarUnJugador(vec[i], confederaciones, tamConfederacion);
+                printf("|_____|____________________|____________________|____________________|____________________|____________________|____________________|\n");
                 flag = 0;
             }
         }
         if(flag)
         {
             cargarDescripcionConfederacion(confederaciones,tamConfederacion, idConfederacion, descripcion);
-            printf("No hay Jugadores registrados en la confederacion: %s\n", descripcion );
+            printf("\nNo hay Jugadores registrados en la confederacion: %s\n", descripcion);
         }
         printf("\n");
 
@@ -112,16 +119,20 @@ int informarTotalPromedio(eJugador vec[], int tam)
     return retorno;
 }
 
-int confederacionMasContratos(eJugador vec[], int tam, int* pConfederacion)
+int calcularConfederacionRegion(eJugador vec[], int tam, int* pConfederacion, int* pRegion)
 {
     int retorno = 0;
     int acumuladores[6];
+    int contadores[6];
     int confederacionMasContratos=0;
-    if(vec != NULL && tam > 0)
+    int regionMasJugadores = 0;
+
+    if(vec != NULL && tam > 0 && pConfederacion != NULL && pRegion != NULL)
     {
         for(int x = 0; x<6; x++)
         {
             acumuladores[x] = 0;
+            contadores[x] = 0;
         }
 
         for(int x = 0; x<tam; x++)
@@ -132,21 +143,27 @@ int confederacionMasContratos(eJugador vec[], int tam, int* pConfederacion)
                 {
                 case 100:
                     acumuladores[0] += vec[x].aniosContrato;
+                    contadores[0]++;
                     break;
                 case 101:
                     acumuladores[1] += vec[x].aniosContrato;
+                    contadores[1]++;
                     break;
                 case 102:
                     acumuladores[2] += vec[x].aniosContrato;
+                    contadores[2]++;
                     break;
                 case 103:
                     acumuladores[3] += vec[x].aniosContrato;
+                    contadores[3]++;
                     break;
                 case 104:
                     acumuladores[4] += vec[x].aniosContrato;
+                    contadores[4]++;
                     break;
                 case 105:
                     acumuladores[5] += vec[x].aniosContrato;
+                    contadores[5]++;
                     break;
                 }
             }
@@ -157,6 +174,12 @@ int confederacionMasContratos(eJugador vec[], int tam, int* pConfederacion)
             {
                 confederacionMasContratos = acumuladores[i];
                 *pConfederacion = i;
+            }
+
+            if(contadores[i] > regionMasJugadores)
+            {
+                regionMasJugadores = contadores[i];
+                *pRegion = i;
             }
         }
         switch(*pConfederacion)
@@ -180,28 +203,52 @@ int confederacionMasContratos(eJugador vec[], int tam, int* pConfederacion)
             *pConfederacion = 105;
             break;
         }
+
+        switch(*pRegion)
+        {
+        case 0:
+            *pRegion = 100;
+            break;
+        case 1:
+            *pRegion = 101;
+            break;
+        case 2:
+            *pRegion = 102;
+            break;
+        case 3:
+            *pRegion = 103;
+            break;
+        case 4:
+            *pRegion = 104;
+            break;
+        case 5:
+            *pRegion = 105;
+            break;
+        }
         retorno = 1;
     }
     return retorno;
 }
 
-int informarRegionMasJugadores(eJugador vec[], int cantJugador, int* pRegion)
+int calcularPorcentaje(eJugador vec[], int tam, float* pPorcentajeCAF, float* pPorcentajeAFC, float* pPorcentajeUEFA, float* pPorcentajeCONMEBOL, float* pPorcentajeCONCACAF, float* pPorcentajeOFC)
 {
     int retorno = 0;
     int contadores[6];
-    int regionMasJugadores=0;
-    if(vec != NULL && cantJugador > 0)
+    int contadorJugadores = 0;
+    if(vec != NULL && tam > 0 && pPorcentajeCAF != NULL && pPorcentajeAFC != NULL && pPorcentajeUEFA && pPorcentajeCONMEBOL != NULL && pPorcentajeCONCACAF != NULL && pPorcentajeOFC != NULL)
     {
         for(int x=0; x<6; x++)
         {
             contadores[x] = 0;
         }
 
-        for(int x=0; x<cantJugador; x++)
+        for(int i=0; i<tam; i++)
         {
-            if(vec[x].isEmpty == OCUPADO)
+            if(vec[i].isEmpty == OCUPADO)
             {
-                switch(vec[x].idConfederacion)
+                contadorJugadores++;
+
+                switch(vec[i].idConfederacion)
                 {
                 case 100:
                     contadores[0]++;
@@ -224,36 +271,54 @@ int informarRegionMasJugadores(eJugador vec[], int cantJugador, int* pRegion)
                 }
             }
         }
-        for(int x=0; x<6; x++)
+
+        *(pPorcentajeCONMEBOL) = (float)((contadores[0] * 100) / contadorJugadores);
+        *(pPorcentajeUEFA) = (float) ((contadores[1] * 100) / contadorJugadores);
+        *(pPorcentajeAFC) = (float) ((contadores[2] * 100) / contadorJugadores);
+        *(pPorcentajeCAF) = (float) ((contadores[3] * 100) / contadorJugadores);
+        *(pPorcentajeCONCACAF) = (float) ((contadores[4] * 100) / contadorJugadores);
+        *(pPorcentajeOFC) = (float) ((contadores[5] * 100) / contadorJugadores);
+
+        retorno = 1;
+    }
+    return retorno;
+
+}
+
+int informarPorcentaje(float PorcentajeCAF, float PorcentajeAFC, float PorcentajeUEFA, float PorcentajeCONMEBOL, float PorcentajeCONCACAF, float PorcentajeOFC)
+{
+    int retorno = 0;
+    printf("\n ================================================\n");
+    printf("| Porcentaje de Jugadores por cada Confederacion |\n");
+    printf("+================================================+\n");
+    printf(" Porcentaje CONMEBOL: %.2f\n", PorcentajeCONMEBOL);
+    printf(" Porcentaje AFC: %.2f\n", PorcentajeAFC);
+    printf(" Porcentaje UEFA: %.2f\n", PorcentajeUEFA);
+    printf(" Porcentaje CAF: %.2f\n", PorcentajeCAF);
+    printf(" Porcentaje CONCACAF: %.2f\n", PorcentajeCONCACAF);
+    printf(" Porcentaje OFC: %.2f\n\n", PorcentajeOFC);
+
+    retorno = 1;
+    return retorno;
+}
+
+int listarPorRegion(eJugador jugadores[], eConfederacion confederaciones[], int tam, int cantConfederacion, int idRegion)
+{
+    int retorno = 0;
+    if(jugadores != NULL)
+    {
+        for(int x = 0; x<tam; x++)
         {
-            if(contadores[x] > regionMasJugadores)
+            if(jugadores[x].isEmpty == OCUPADO && jugadores[x].idConfederacion == idRegion)
             {
-                regionMasJugadores = contadores[x];
-                *pRegion = x;
-            }
-            switch(*pRegion)
-            {
-            case 0:
-                *pRegion = 100;
-                break;
-            case 1:
-                *pRegion = 101;
-                break;
-            case 2:
-                *pRegion = 102;
-                break;
-            case 3:
-                *pRegion = 103;
-                break;
-            case 4:
-                *pRegion = 104;
-                break;
-            case 5:
-                *pRegion = 105;
-                break;
+                printf("\n ___________________________________________________________________________________________________________________________________\n"
+                       "|%-5s|%-20s|%-20s|%-20s|%-20s|%-20s|A%cos de Contrato    |\n"
+                       "|=====|====================|====================|====================|====================|====================|====================|\n","ID","Nombre","Posicion","Nro Camiseta","Sueldo","Confederacion",164);
+                mostrarUnJugador(jugadores[x],confederaciones,cantConfederacion);
+                printf("|_____|____________________|____________________|____________________|____________________|____________________|____________________|\n");
+                retorno = 1;
             }
         }
-        retorno =1;
     }
     return retorno;
 }
@@ -264,12 +329,19 @@ int informarOpciones(eJugador vec[], int cantJugador, eConfederacion confederaci
     int opcion;
     int confederacionMayorContratos;
     int regionMasJugadores;
+    float pCONMEBOL;
+    float pAFC;
+    float pCAF;
+    float pUEFA;
+    float pCONCACAF;
+    float pOFC;
     char descripcionConfederacion[50];
     char descripcionRegion[50];
     if(vec != NULL && cantJugador > 0 && confederaciones != NULL && cantConfederacion > 0)
     {
         menuInformes();
-        ingresarOpcion(&opcion, "Ingrese una opcion: ");
+        tomarEntero(&opcion,"ingrese una opcion: ","\nPorfavor, ingrese una opcion valida!\n\n",1,6,100000);
+
         switch(opcion)
         {
         case 1:
@@ -283,20 +355,19 @@ int informarOpciones(eJugador vec[], int cantJugador, eConfederacion confederaci
             informarTotalPromedio(vec,cantJugador);
             break;
         case 4:
-            confederacionMasContratos(vec,cantJugador,&confederacionMayorContratos);
+            calcularConfederacionRegion(vec,cantJugador,&confederacionMayorContratos, &regionMasJugadores);
             cargarDescripcionConfederacion(confederaciones,cantConfederacion,confederacionMayorContratos,descripcionConfederacion);
             printf("\nLa confederaci%cn con mayor cantidad de a%cos de contratos total es: %s \n",162, 164, descripcionConfederacion);
             break;
         case 5:
-            //No me dio el tiempo :'(
+            calcularPorcentaje(vec, cantJugador, &pCAF, &pAFC, &pUEFA, &pCONMEBOL, &pCONCACAF, &pOFC);
+            informarPorcentaje(pCAF,pAFC,pUEFA,pCONMEBOL,pCONCACAF,pOFC);
             break;
         case 6:
-            informarRegionMasJugadores(vec,cantJugador,&regionMasJugadores);
+            calcularConfederacionRegion(vec,cantJugador,&confederacionMayorContratos,&regionMasJugadores);
             cargarDescripcionRegion(confederaciones,cantConfederacion,regionMasJugadores,descripcionRegion);
-            printf("\nLa regi%cn con m%cs jugadores es: %s\n",162, 160, descripcionRegion);
-            break;
-        default:
-            printf("\nError, ingrese una opcion valida!\n");
+            printf("\nLa regi%cn con m%cs jugadores es: %s\n\n",162, 160, descripcionRegion);
+            listarPorRegion(vec,confederaciones,cantJugador,cantConfederacion,regionMasJugadores);
             break;
         }
         retorno = 1;
